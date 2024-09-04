@@ -80,7 +80,11 @@ class Angle:
         return self.degree if self.degree<180 else self.degree-360
     @property
     def sradian(self):
-        return self.radian if self.degree<np.pi else self.radian-2*np.pi
+        return self.radian if self.radian<np.pi else self.radian-2*np.pi
+    
+    @property
+    def frac(self):
+        return self.radian/(2*np.pi)
 
     def __add__(self,value):
         if isinstance(value,Angle):
