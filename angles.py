@@ -17,6 +17,7 @@
 import numpy as np
 import cmath
 
+
 class Angle:
     def __init__(self, deg=None, rad=None, complex=None) -> None:
         if complex: self.complex = complex
