@@ -105,7 +105,7 @@ class Angle:
         return Angle(complex=np.conjugate(self.complex))
 
     def __eq__(self,value):
-        '''Equivalency accounting for Float error'''
+        '''Equivalency accounting for Float64 numerical error'''
         if isinstance(value,Angle):
             comparison_value = value.degree
         else:
@@ -114,9 +114,41 @@ class Angle:
         # If on the border between 0 and 360
         if diff > 359: diff -= 360
         return np.isclose(diff,0,rtol=1e-12)  
+    
+    def __ne__(self,value):
+        return not self.__eq__(value)
 
-    # def __gt__(self,value):
-    #     if self.__eq__(value): return False
+    def _gt(self,value):
+        if isinstance(value,Angle):
+            return self.sdegree>value.sdegree
+        else:
+            value %= 360
+            if value>180:value-=360
+            return self.sdegree>value
+
+    def __gt__(self,value):
+        if self.__eq__(value): return False
+        return self._gt(value)
+
+    def __ge__(self,value):
+        if self.__eq__(value): return True
+        return self._gt(value)
+    
+    def _lt(self,value):
+        if isinstance(value,Angle):
+            return self.sdegree<value.sdegree
+        else:
+            value %= 360
+            if value>180:value-=360
+            return self.sdegree<value
+
+    def __lt__(self,value):
+        if self.__eq__(value): return False
+        return self._lt(value)
+
+    def __le__(self,value):
+        if self.__eq__(value): return True
+        return self._lt(value)
 
 
 ### External Functions With angles
