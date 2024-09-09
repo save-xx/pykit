@@ -17,13 +17,15 @@
 import numpy as np
 import cmath
 
-
 class Angle:
     def __init__(self, deg=None, rad=None, complex=None) -> None:
         if complex: self.complex = complex
         elif rad:   self.radian = rad
         elif deg:   self.degree = deg
         else:       self.degree = 0
+
+    def __str__(self):
+        return f'{self.degree:.8f}'
 
     @property
     def degree(self):
@@ -150,6 +152,10 @@ class Angle:
         if self.__eq__(value): return True
         return self._lt(value)
 
+    def __abs__(self):
+        ''' return value in the first semicircle (0-180 degrees) '''
+        if np.imag(self.complex) < 0: return self.__neg__()
+        else: return self
 
 ### External Functions With angles
 
@@ -190,14 +196,29 @@ def angspace(start:Angle, end:Angle, steps=100):
     return result
 
 
+def geometric_median(angle_list: list) -> Angle:
+    ''' 
+    Return the geometric median of a list of angles 
+    The returnin angle is the angle whose collective distance from all the others is the minimal
+    If more than one angle correspond to the description the mean of all eligible angles is then returned
+    '''
+    distances = []
+    for angle in angle_list:
+        distances.append(sum([(abs(angle-c)).degree for c in angle_list]))
+    min_value = min(distances)
+    min_idx = [index for index, value in enumerate(distances) if value == min_value]
+    angle_list = [ angle_list[ index ] for index in min_idx ]
+    return mean_angle(angle_list)
+
+    
 
 if __name__ == "__main__":
     a = Angle(deg=-20)
     b = Angle(deg=70)
+    d = Angle(deg=99)
     c = mean_angle([a,b])
-    print(c.degree)
-    print(angspace(a,c,101))
-    print(len(angspace(a,c,101)))
+
+    print(geometric_median([a,a,d,b,a]))
 
 
 
